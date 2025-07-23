@@ -66,7 +66,7 @@ export class AccountResolver {
 		const owner: User | undefined = await User.findOne({ where: { id: payload.userId } });
 
 		if (owner) {
-			const account = Account.findOne({ where: { owner: owner, currency: currency } });
+			const account = await Account.findOne({ where: { owner: owner, currency: currency } });
 
 			if (account) {
 				return account;

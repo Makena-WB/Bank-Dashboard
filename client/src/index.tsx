@@ -1,16 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
-import { onError } from 'apollo-link-error';
-import { ApolloLink, Observable } from 'apollo-link';
-import { ApolloProvider } from '@apollo/react-hooks';
-import { getAccessToken, setAccessToken } from './utils/accessToken';
+import { ApolloProvider, ApolloClient, InMemoryCache, HttpLink, ApolloLink } from '@apollo/client';
+import { onError } from '@apollo/client/link/error';
+import { Observable } from '@apollo/client';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import jwtDecode from 'jwt-decode';
 import { App } from './App';
+import { getAccessToken, setAccessToken } from './utils/accessToken';
 
 // Setup Apollo Client manually without Apollo Boost
 // https://www.apollographql.com/docs/react/migrating/boost-migration/
@@ -49,20 +46,12 @@ const client = new ApolloClient({
     link: ApolloLink.from([
         new TokenRefreshLink({
             accessTokenField: 'accessToken',
-            isTokenValidOrUndefined: () => {
+            isTokenValidOrUndefined: async () => {
                 const token = getAccessToken();
-
-                if (!token) {
-                    return true;
-                }
-
+                if (!token) return true;
                 try {
                     const { exp } = jwtDecode(token);
-                    if (Date.now() >= exp * 1000) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    return Date.now() < exp * 1000;
                 } catch {
                     return false;
                 }

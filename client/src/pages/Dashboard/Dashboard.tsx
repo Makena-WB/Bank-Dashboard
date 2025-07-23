@@ -195,11 +195,15 @@ export const Dashboard: React.FC = () => {
 
     const handleCreateNewCardClicked = async (e: MouseEvent<HTMLButtonElement>): Promise<void> => {
         e.preventDefault();
-
+        if (!analyticsAccount) {
+            console.log('No currency selected for card creation.');
+            return;
+        }
+        console.log('analyticsAccount:', analyticsAccount);
         try {
-            // Call the createCard mutation
+            // Use the currently selected analyticsAccount currency for the new card
             const response: ExecutionResult<CreateCardMutation> = await createCard({
-                variables: {},
+                variables: { currency: analyticsAccount },
                 refetchQueries: [
                     {
                         query: CardsDocument,
@@ -243,6 +247,7 @@ export const Dashboard: React.FC = () => {
                             onCreateNewCardClicked={(e: MouseEvent<HTMLButtonElement>) => {
                                 handleCreateNewCardClicked(e);
                             }}
+                            disabled={!analyticsAccount}
                         />
                     </Paper>
                 </Grid>

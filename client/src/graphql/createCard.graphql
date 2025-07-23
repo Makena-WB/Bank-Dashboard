@@ -1,3 +1,8 @@
-mutation createCard {
-    createCard
+mutation createCard($currency: String!) {
+  createCard(currency: $currency) {
+    id
+    cardNumber
+    expiresIn
+    cvv
+  }
 }
