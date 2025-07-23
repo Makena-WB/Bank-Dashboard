@@ -36,10 +36,6 @@
 	"scripts": {
 		"start": "ts-node src/index.ts",
 		"dev": "nodemon --exec ts-node src/index.ts",
-		"build": "tsc",
-		"preinstall": "npx npm-force-resolutions"
-	},
-	"resolutions": {
-		"minimist": "^1.2.5"
-	}
+	"build": "tsc"
+  }
 }
