@@ -22,25 +22,24 @@ import {
     ListItemText,
     ThemeProvider,
     Button,
-} from '@material-ui/core';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
-import VpnKeyIcon from '@material-ui/icons/VpnKey';
-import InfoIcon from '@material-ui/icons/Info';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+} from '@mui/material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import InfoIcon from '@mui/icons-material/Info';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Title } from '../../components/Typography/Title';
 import { Dialog } from '../../components/Dialog/Dialog';
 import { ReactComponent as Euro } from '../../assets/world.svg';
 import { ReactComponent as Dollar } from '../../assets/flag.svg';
 import { ReactComponent as Pound } from '../../assets/uk.svg';
 import { useHistory } from 'react-router-dom';
-import { MutationTuple } from '@apollo/react-hooks';
+import { MutationTuple } from '@apollo/client';
 import { Formik, Form } from 'formik';
 import { FormTextField } from '../../components/Forms/FormTextField';
 import { theme, ColorScheme } from '../../utils/theme';
 import { SuccessMessage, ErrorMessage } from '../../components/Alerts/AlertMessage';
 import { changePasswordValidationSchema } from '../../schemas/changePasswordValidationSchema';
-import { ExecutionResultDataDefault, ExecutionResult } from 'graphql/execution/execute';
 import { setAccessToken } from '../../utils/accessToken';
 import { Loading } from '../../components/Loading/Loading';
 
@@ -58,10 +57,7 @@ export const Settings: React.FC = () => {
         DestroyAccountMutation,
         DestroyAccountMutationVariables
     > = useDestroyAccountMutation();
-    const [logout, { client }]: MutationTuple<
-        LogoutMutation,
-        LogoutMutationVariables
-    > = useLogoutMutation();
+    const [logout, { client }] = useLogoutMutation();
 
     // State
     const [showLoadingIcon, setShowLoadingIcon] = useState<boolean>(false);
@@ -82,7 +78,7 @@ export const Settings: React.FC = () => {
         }
     }, [data]);
 
-    const renderPersonalDetailsDialog = (): JSX.Element => {
+    const renderPersonalDetailsDialog = (): React.ReactElement => {
         return (
             <Dialog
                 isOpen={openPersonalDetailsDialog}
@@ -105,7 +101,7 @@ export const Settings: React.FC = () => {
         );
     };
 
-    const renderAccountDetailsDialog = (): JSX.Element => {
+    const renderAccountDetailsDialog = (): React.ReactElement => {
         return (
             <Dialog
                 isOpen={openAccountDetailsDialog}
@@ -167,7 +163,7 @@ export const Settings: React.FC = () => {
         );
     };
 
-    const renderChangePasswordDialog = (): JSX.Element => {
+    const renderChangePasswordDialog = (): React.ReactElement => {
         return (
             <Dialog
                 isOpen={openChangePasswordDialog}
@@ -197,7 +193,10 @@ export const Settings: React.FC = () => {
                                     resetForm();
                                 }
                             } catch (error) {
-                                const errorMessage = error.message.split(':')[1];
+                                let errorMessage = 'Unknown error';
+                                if (error instanceof Error) {
+                                    errorMessage = error.message.split(':')[1];
+                                }
                                 setErrorMessage(errorMessage);
                                 setSubmitting(false);
                             }
@@ -246,7 +245,7 @@ export const Settings: React.FC = () => {
         );
     };
 
-    const renderAboutDialog = (): JSX.Element => {
+    const renderAboutDialog = (): React.ReactElement => {
         return (
             <Dialog isOpen={openAboutDialog} onClose={() => setOpenAboutDialog(false)}>
                 <Title title="About this website" fontSize={18} />
@@ -420,7 +419,7 @@ export const Settings: React.FC = () => {
         );
     };
 
-    const renderAlertMessage = (): JSX.Element | undefined => {
+    const renderAlertMessage = (): React.ReactElement | undefined => {
         if (successMessage.length > 0) {
             return (
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
@@ -503,7 +502,7 @@ export const Settings: React.FC = () => {
                                 button
                                 onClick={async () => {
                                     try {
-                                        const response: ExecutionResult<ExecutionResultDataDefault> = await destroyAccount();
+                                const response = await destroyAccount();
 
                                         if (response && response.data) {
                                             setShowLoadingIcon(true);
@@ -514,7 +513,10 @@ export const Settings: React.FC = () => {
                                             }, 3000);
                                         }
                                     } catch (error) {
-                                        const errorMessage: string = error.message.split(':')[1];
+                                        let errorMessage = 'Unknown error';
+                                        if (error instanceof Error) {
+                                            errorMessage = error.message.split(':')[1];
+                                        }
                                         console.log(errorMessage);
                                     }
                                 }}

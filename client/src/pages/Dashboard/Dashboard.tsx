@@ -1,4 +1,4 @@
-import React, { useState, useEffect, MouseEvent, ChangeEvent } from 'react';
+import React, { useState, useEffect, MouseEvent } from 'react';
 import {
     Container,
     Grid,
@@ -12,8 +12,9 @@ import {
     Select,
     MenuItem,
     ThemeProvider,
-} from '@material-ui/core';
-import { Chart } from '../../components/Charts/Chart';
+    SelectChangeEvent,
+} from '@mui/material';
+import { LineChart } from '../../components/Charts/Chart';
 import { Title } from '../../components/Typography/Title';
 import { ReactComponent as Euro } from '../../assets/world.svg';
 import { ReactComponent as Dollar } from '../../assets/flag.svg';
@@ -38,7 +39,7 @@ import { useHistory } from 'react-router-dom';
 import { AccountsCard, NoAccountsCard } from '../../components/Cards/AccountsCard';
 import { Dialog } from '../../components/Dialog/Dialog';
 import { NoApolloCard, ApolloCard } from '../../components/Cards/ApolloCard';
-import { MutationTuple } from '@apollo/react-hooks';
+import { MutationTuple } from '@apollo/client';
 import { ExecutionResult } from 'graphql';
 import { theme } from '../../utils/theme';
 import { useDashboardStyles } from './styles/Dashboard.style';
@@ -123,7 +124,7 @@ export const Dashboard: React.FC = () => {
         );
     }
 
-    const determineCurrencyIcon = (c: string): JSX.Element | undefined => {
+    const determineCurrencyIcon = (c: string): React.ReactElement | undefined => {
         switch (c) {
             case 'EUR':
                 return <Euro />;
@@ -135,7 +136,7 @@ export const Dashboard: React.FC = () => {
         return undefined;
     };
 
-    const renderDialog = (): JSX.Element => {
+    const renderDialog = (): React.ReactElement => {
         return (
             <Dialog isOpen={openDialog} onClose={() => setOpenDialog(false)}>
                 <List>
@@ -146,30 +147,30 @@ export const Dashboard: React.FC = () => {
                             onClick={async () => {
                                 // Call the createAccount mutation
                                 try {
-                                    const response: ExecutionResult<CreateAccountMutation> = await createAccount(
-                                        {
-                                            variables: {
-                                                currency: currency,
-                                            },
-                                            refetchQueries: [
-                                                {
-                                                    query: AccountsDocument,
-                                                    variables: {},
-                                                },
-                                                {
-                                                    query: CardsDocument,
-                                                    variables: {},
-                                                },
-                                            ],
+                                    const response = await createAccount({
+                                        variables: {
+                                            currency: currency,
                                         },
-                                    );
-
+                                        refetchQueries: [
+                                            {
+                                                query: AccountsDocument,
+                                                variables: {},
+                                            },
+                                            {
+                                                query: CardsDocument,
+                                                variables: {},
+                                            },
+                                        ],
+                                    });
                                     if (response && response.data) {
                                         setAnalyticsAccount(currency);
                                         setOpenDialog(false);
                                     }
                                 } catch (error) {
-                                    const errorMessage: string = error.message.split(':')[1];
+                                    let errorMessage = 'Unknown error';
+                                    if (error instanceof Error) {
+                                        errorMessage = error.message.split(':')[1];
+                                    }
                                     console.log(errorMessage);
                                 }
                             }}
@@ -202,7 +203,7 @@ export const Dashboard: React.FC = () => {
         console.log('analyticsAccount:', analyticsAccount);
         try {
             // Use the currently selected analyticsAccount currency for the new card
-            const response: ExecutionResult<CreateCardMutation> = await createCard({
+            const response = await createCard({
                 variables: { currency: analyticsAccount },
                 refetchQueries: [
                     {
@@ -211,17 +212,19 @@ export const Dashboard: React.FC = () => {
                     },
                 ],
             });
-
             if (response && response.data) {
                 console.log('Card successfully created!');
             }
         } catch (error) {
-            const errorMessage: string = error.message.split(':')[1];
+            let errorMessage = 'Unknown error';
+            if (error instanceof Error) {
+                errorMessage = error.message.split(':')[1];
+            }
             console.log(errorMessage);
         }
     };
 
-    const renderNoAccountsCard = (): JSX.Element => {
+    const renderNoAccountsCard = (): React.ReactElement => {
         return (
             <>
                 <Grid item xs={12} md={4} lg={4}>
@@ -238,7 +241,7 @@ export const Dashboard: React.FC = () => {
         );
     };
 
-    const renderNoApolloCard = (): JSX.Element => {
+    const renderNoApolloCard = (): React.ReactElement => {
         return (
             <>
                 <Grid item xs={12} md={4} lg={4}>
@@ -247,7 +250,6 @@ export const Dashboard: React.FC = () => {
                             onCreateNewCardClicked={(e: MouseEvent<HTMLButtonElement>) => {
                                 handleCreateNewCardClicked(e);
                             }}
-                            disabled={!analyticsAccount}
                         />
                     </Paper>
                 </Grid>
@@ -255,7 +257,7 @@ export const Dashboard: React.FC = () => {
         );
     };
 
-    const renderChartOptions = (): JSX.Element => {
+    const renderChartOptions = (): React.ReactElement => {
         return (
             <>
                 <ThemeProvider theme={theme}>
@@ -265,7 +267,7 @@ export const Dashboard: React.FC = () => {
                             labelId="select-filled-label"
                             id="select-filled"
                             value={analyticsAccount}
-                            onChange={(event: ChangeEvent<{ value: unknown }>) =>
+                            onChange={(event: SelectChangeEvent<string>) =>
                                 setAnalyticsAccount(event.target.value as string)
                             }
                             label="Account"
@@ -304,7 +306,7 @@ export const Dashboard: React.FC = () => {
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={12} lg={12}>
                             <Paper className={chartPaper}>
-                                <Chart currency={!!analyticsAccount ? analyticsAccount : 'EUR'} />
+                                <LineChart currency={!!analyticsAccount ? analyticsAccount : 'EUR'} />
                             </Paper>
                         </Grid>
                     </Grid>

@@ -6,14 +6,13 @@ import {
     RegisterMutation,
 } from '../../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
-import { Button, ThemeProvider } from '@material-ui/core';
+import { Button, ThemeProvider } from '@mui/material';
 import { theme } from '../../utils/theme';
 import { registerValidationSchema } from '../../schemas/registerValidationSchema';
 import { FormTextField, FormDatePicker } from '../../components/Forms/FormTextField';
 import { ErrorMessage } from '../../components/Alerts/AlertMessage';
 import { useRegisterStyles } from './Register.style';
-import { MutationTuple } from '@apollo/react-hooks';
-
+import { MutationTuple } from '@apollo/client';
 export const Register: React.FC<RouteComponentProps> = ({ history }) => {
     // GraphQL Mutations
     const [register]: MutationTuple<

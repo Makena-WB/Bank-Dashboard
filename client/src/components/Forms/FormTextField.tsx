@@ -1,6 +1,6 @@
 import { FieldAttributes, useField } from 'formik';
 import React from 'react';
-import { ThemeProvider, TextField } from '@material-ui/core';
+import { ThemeProvider, TextField } from '@mui/material';
 import { theme } from '../../utils/theme';
 
 export const FormTextField: React.FC<FieldAttributes<{}>> = ({

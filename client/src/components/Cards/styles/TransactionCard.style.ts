@@ -1,4 +1,6 @@
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
+import { createStyles } from '@mui/styles';
+import { Theme } from '@mui/material';
 import { ColorScheme } from '../../../utils/theme';
 
 export const useTransactionCardStyles = makeStyles((theme: Theme) =>
@@ -21,5 +23,5 @@ export const useTransactionCardStyles = makeStyles((theme: Theme) =>
         avatar: {
             backgroundColor: ColorScheme.PRIMARY,
         },
-    }),
+    })
 );

@@ -10,7 +10,7 @@ import {
 } from '../../generated/graphql';
 import { useHistory } from 'react-router-dom';
 import { setAccessToken } from '../../utils/accessToken';
-import { MutationTuple } from '@apollo/react-hooks';
+import { MutationTuple } from '@apollo/client';
 
 interface ToolbarProps {
     drawerClickHandler(): void;
@@ -46,7 +46,7 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
         }
     }, [data, loading]);
 
-    const renderAuthUserButtons = (): JSX.Element => {
+    const renderAuthUserButtons = (): React.ReactElement => {
         return (
             <>
                 {navigationItems.map((item: string) => {
@@ -81,7 +81,7 @@ export const Toolbar: React.FC<ToolbarProps> = (props: ToolbarProps) => {
         );
     };
 
-    const renderNonAuthUserButtons = (): JSX.Element => {
+    const renderNonAuthUserButtons = (): React.ReactElement => {
         return (
             <>
                 <button

@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import './index.css';
 import { ApolloProvider, ApolloClient, InMemoryCache, HttpLink, ApolloLink } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
@@ -50,7 +50,7 @@ const client = new ApolloClient({
                 const token = getAccessToken();
                 if (!token) return true;
                 try {
-                    const { exp } = jwtDecode(token);
+                    const { exp } = jwtDecode<{ exp: number }>(token);
                     return Date.now() < exp * 1000;
                 } catch {
                     return false;
@@ -83,9 +83,10 @@ const client = new ApolloClient({
     cache,
 });
 
-ReactDOM.render(
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(
     <ApolloProvider client={client}>
         <App />
-    </ApolloProvider>,
-    document.getElementById('root'),
+    </ApolloProvider>
 );

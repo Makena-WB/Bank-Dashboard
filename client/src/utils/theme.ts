@@ -1,4 +1,4 @@
-import { createMuiTheme, Theme } from '@material-ui/core';
+import { createTheme, Theme } from '@mui/material';
 
 export enum ColorScheme {
     PRIMARY = '#222B2D',
@@ -11,7 +11,7 @@ export enum ColorScheme {
 }
 
 // For Material UI
-export const theme: Theme = createMuiTheme({
+export const theme: Theme = createTheme({
     palette: {
         primary: {
             main: ColorScheme.PRIMARY,

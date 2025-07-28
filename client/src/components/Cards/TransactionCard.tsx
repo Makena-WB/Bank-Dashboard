@@ -8,8 +8,8 @@ import {
     IconButton,
     CardActions,
     ThemeProvider,
-} from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { theme } from '../../utils/theme';
 import { useTransactionCardStyles } from './styles/TransactionCard.style';
 
@@ -30,6 +30,7 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
     transactionIcon,
     currencyIcon,
 }) => {
+    // Fix: useTransactionCardStyles should return a ClassNameMap with correct keys
     const classes = useTransactionCardStyles();
     const [expanded, setExpanded] = useState(false);
 
@@ -71,10 +72,11 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
                                 borderBottom: `1px solid black`,
                             }}
                         />
-                        <div className={classes.expandedText} style={{ marginTop: 12 }}>
+                        {/* Ensure expandedText and avatar are defined in TransactionCard.style.ts */}
+                        <div className={classes.expandedText ? classes.expandedText : undefined} style={{ marginTop: 12 }}>
                             Apollo card: <span style={{ color: 'black' }}>{card}</span>
                         </div>
-                        <div className={classes.expandedText}>
+                        <div className={classes.expandedText ? classes.expandedText : undefined}>
                             Amount:{' '}
                             <span style={{ color: 'black' }}>
                                 {currencyIcon}

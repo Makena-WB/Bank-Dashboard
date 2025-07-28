@@ -10,12 +10,12 @@ import {
 import { setAccessToken } from '../../utils/accessToken';
 import { Formik, Form } from 'formik';
 import { FormTextField } from '../../components/Forms/FormTextField';
-import { Button, ThemeProvider } from '@material-ui/core';
+import { Button, ThemeProvider } from '@mui/material';
 import { theme, ColorScheme } from '../../utils/theme';
 import { loginValidationSchema } from '../../schemas/loginValidationSchema';
 import { ErrorMessage } from '../../components/Alerts/AlertMessage';
 import { useLoginStyles } from './Login.style';
-import { MutationTuple } from '@apollo/react-hooks';
+import { MutationTuple } from '@apollo/client';
 import { ExecutionResult } from 'graphql';
 
 export const Login: React.FC<RouteComponentProps> = ({ history }) => {
@@ -45,7 +45,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
 
                     // On login button click, call the login mutation
                     try {
-                        const response: ExecutionResult<LoginMutation> = await login({
+                        const response = await login({
                             variables: {
                                 email: data.email,
                                 password: data.password,
@@ -73,7 +73,10 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
                             resetForm();
                         }
                     } catch (error) {
-                        const errorMessage: string = error.message.split(':')[1];
+                        let errorMessage = 'Unknown error';
+                        if (error instanceof Error) {
+                            errorMessage = error.message.split(':')[1];
+                        }
                         setErrorMessage(errorMessage);
                         setSubmitting(false);
                     }

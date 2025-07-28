@@ -1,6 +1,6 @@
 import React, { MouseEvent } from 'react';
-import { ThemeProvider, Button } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
+import { ThemeProvider, Button } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { theme } from '../../utils/theme';
 import { ReactComponent as MasterCard } from '../../assets/mc_symbol.svg';
 import { useApolloCardStyles } from './styles/ApolloCard.style';

@@ -3,10 +3,10 @@ import { TransactionsQuery, Transaction } from '../../../generated/graphql';
 import { useAccountStyles } from '../styles/Account.style';
 import { Loading } from '../../../components/Loading/Loading';
 import { TransactionCard } from '../../../components/Cards/TransactionCard';
-import PaymentIcon from '@material-ui/icons/Payment';
-import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
-import LocalAtmIcon from '@material-ui/icons/LocalAtm';
-import ReceiptIcon from '@material-ui/icons/Receipt';
+import PaymentIcon from '@mui/icons-material/Payment';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 
 interface TransactionProps {
     account: TransactionsQuery | undefined;

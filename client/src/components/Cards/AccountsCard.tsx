@@ -1,7 +1,7 @@
 import React, { MouseEvent } from 'react';
-import { IconButton, Typography, Divider, Button, ThemeProvider } from '@material-ui/core';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import AddIcon from '@material-ui/icons/Add';
+import { IconButton, Typography, Divider, Button, ThemeProvider } from '@mui/material';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import AddIcon from '@mui/icons-material/Add';
 import { Title } from '../Typography/Title';
 import { ColorScheme, theme } from '../../utils/theme';
 import { useAccountsCardStyles, useNoAccountsCardStyles } from './styles/AccountsCard.style';

@@ -1,17 +1,38 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
-// Chart.js v2 does not require manual registration
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 import {
     useTransactionsQuery,
     TransactionsQueryResult,
     Transaction,
 } from '../../generated/graphql';
 import { useChartStyles } from './Chart.style';
+
+// Register Chart.js components for v3+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
 interface ChartProps {
     currency: string;
 }
 
-export const Chart: React.FC<ChartProps> = ({ currency }) => {
+export const LineChart: React.FC<ChartProps> = ({ currency }) => {
     // GraphQL queries
     const { data }: TransactionsQueryResult = useTransactionsQuery({
         variables: { currency },
@@ -24,7 +45,7 @@ export const Chart: React.FC<ChartProps> = ({ currency }) => {
         ? data.transactions.map((transaction: Transaction) => ({
             date: new Date(Date.parse(transaction.date)).toLocaleDateString(),
             type: transaction.transactionType,
-            amount: transaction.amount,
+            amount: Number(transaction.amount), // Ensure amount is a number
         }))
         : [];
 
@@ -33,7 +54,7 @@ export const Chart: React.FC<ChartProps> = ({ currency }) => {
         datasets: [
             {
                 label: 'Amount',
-                data: chartData.map(t => t.amount),
+                data: chartData.map(t => t.amount), // Now an array of numbers
                 borderColor: '#29AABB',
                 backgroundColor: 'rgba(41,170,187,0.2)',
                 fill: true,
@@ -44,36 +65,37 @@ export const Chart: React.FC<ChartProps> = ({ currency }) => {
 
     const options = {
         responsive: true,
-        legend: {
-            position: 'top',
-        },
-        title: {
-            display: true,
-            text: 'Spending (this month)',
+        plugins: {
+            legend: {
+                position: 'top' as const, // Use string literal type
+            },
+            title: {
+                display: true,
+                text: 'Spending (this month)',
+            },
         },
         scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true,
-                },
-                scaleLabel: {
+            y: {
+                beginAtZero: true,
+                title: {
                     display: true,
-                    labelString: 'Amount',
+                    text: 'Amount',
                 },
-            }],
-            xAxes: [{
-                scaleLabel: {
+            },
+            x: {
+                title: {
                     display: true,
-                    labelString: 'Date',
+                    text: 'Date',
                 },
-            }],
+            },
         },
     };
 
     return (
-        <div className={classes.root}>
-            <Line data={lineData} options={options} />
-        </div>
+        <Line
+            data={lineData}
+            options={options}
+        />
     );
 };
 // ...existing code...

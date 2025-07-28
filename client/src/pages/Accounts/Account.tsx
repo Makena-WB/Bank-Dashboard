@@ -1,4 +1,5 @@
 import React, { useState, MouseEvent, useEffect, ChangeEvent } from 'react';
+// Ensure React is imported for JSX namespace usage
 import { useLocation, useHistory } from 'react-router-dom';
 import {
     ThemeProvider,
@@ -8,10 +9,11 @@ import {
     FormControl,
     Select,
     MenuItem,
-} from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import SwapVert from '@material-ui/icons/SwapVert';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+    SelectChangeEvent,
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import SwapVert from '@mui/icons-material/SwapVert';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { ReactComponent as Euro } from '../../assets/world.svg';
 import { ReactComponent as Dollar } from '../../assets/flag.svg';
 import { ReactComponent as Pound } from '../../assets/uk.svg';
@@ -46,9 +48,8 @@ import { Dialog } from '../../components/Dialog/Dialog';
 import { FormTextField } from '../../components/Forms/FormTextField';
 import { Form, Formik } from 'formik';
 import { Title } from '../../components/Typography/Title';
-import { MutationTuple } from '@apollo/react-hooks';
-import { ExecutionResult } from 'graphql';
-import { ExecutionResultDataDefault } from 'graphql/execution/execute';
+import { MutationTuple } from '@apollo/client';
+// Removed ExecutionResult import, not needed for Apollo Client mutation results
 import { Transactions } from './Transactions/Transactions';
 import { ErrorMessage, SuccessMessage, WarningMessage } from '../../components/Alerts/AlertMessage';
 import { addMoneyValidationSchema } from '../../schemas/addMoneyValidationSchema';
@@ -151,7 +152,7 @@ export const Account: React.FC = () => {
 
     const simulate = async (): Promise<void> => {
         try {
-            const response: ExecutionResult<ExecutionResultDataDefault> = await createTransaction({
+            const response = await createTransaction({
                 variables: {
                     currency: location.state.currency,
                 },
@@ -165,226 +166,232 @@ export const Account: React.FC = () => {
                 ],
             });
             if (response && response.data) {
-                // Update the account balance
                 setAccountBalance(response.data.createTransaction);
             }
         } catch (error) {
-            const errorMessage: string = error.message.split(':')[1];
+            let errorMessage = 'Unknown error';
+            if (error instanceof Error) {
+                errorMessage = error.message.split(':')[1] || error.message;
+            }
             console.log(errorMessage);
         }
     };
 
-    const renderAddDialog = (): JSX.Element => {
+    const renderAddDialog = (): React.ReactElement => {
         return (
-            <Dialog isOpen={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-                <Title title="Add money" fontSize={18} />
-                <div style={{ marginTop: 12 }}>
-                    <Formik
-                        initialValues={{ amount: 10 }}
-                        validationSchema={addMoneyValidationSchema}
-                        onSubmit={async (data, { setSubmitting, resetForm }) => {
-                            setSubmitting(true);
-
-                            // Call the add money mutation
-                            try {
-                                const response = await addMoney({
-                                    variables: {
-                                        amount: data.amount,
-                                        currency: location.state.currency,
-                                    },
-                                });
-
-                                if (response && response.data) {
-                                    setSubmitting(false);
-                                    setSuccessMessage(response.data.addMoney.message);
-                                    resetForm();
-                                }
-                            } catch (error) {
-                                const errorMessage = error.message.split(':')[1];
-                                setErrorMessage(errorMessage);
-                                setSubmitting(false);
-                            }
-                        }}
-                    >
-                        {({ isSubmitting }) => (
-                            <div>
-                                <Form>
-                                    <FormTextField
-                                        name="amount"
-                                        placeholder="amount"
-                                        type="number"
-                                    />
-                                    <div>
-                                        <ThemeProvider theme={theme}>
-                                            <Button
-                                                className={classes.dialogButton}
-                                                disabled={isSubmitting}
-                                                variant="contained"
-                                                color="secondary"
-                                                type="submit"
-                                            >
-                                                Add money
-                                            </Button>
-                                        </ThemeProvider>
-                                    </div>
-                                </Form>
-                            </div>
-                        )}
-                    </Formik>
-                </div>
-            </Dialog>
-        );
-    };
-
-    const renderExchangeDialog = (): JSX.Element => {
-        return (
-            <Dialog isOpen={openExchangeDialog} onClose={() => setOpenExchangeDialog(false)}>
-                <Title title="Exchange" fontSize={18} />
-                <div style={{ marginTop: 12 }}>
-                    <Formik
-                        initialValues={{ amount: 10 }}
-                        onSubmit={async (data, { setSubmitting, resetForm }) => {
-                            setSubmitting(true);
-
-                            // If the user has selected a currency account to exchange to, call the exchange mutation
-                            if (toAccountCurrency !== '') {
+            <Dialog isOpen={openAddDialog} onClose={() => setOpenAddDialog(false)} children={
+                <React.Fragment>
+                    <Title title="Add money" fontSize={18} />
+                    <div style={{ marginTop: 12 }}>
+                        <Formik
+                            initialValues={{ amount: 10 }}
+                            validationSchema={addMoneyValidationSchema}
+                            onSubmit={async (data, { setSubmitting, resetForm }) => {
+                                setSubmitting(true);
                                 try {
-                                    const response = await exchange({
+                                    const response = await addMoney({
                                         variables: {
-                                            selectedAccountCurrency: location.state.currency,
-                                            toAccountCurrency: toAccountCurrency,
                                             amount: data.amount,
+                                            currency: location.state.currency,
                                         },
                                     });
-
                                     if (response && response.data) {
-                                        // if the exchange was a success update the account balance and render a success message
                                         setSubmitting(false);
-                                        setSuccessMessage(response.data.exchange.message);
+                                        setSuccessMessage(response.data.addMoney.message);
                                         resetForm();
                                     }
                                 } catch (error) {
-                                    const errorMessage: string = error.message.split(':')[1];
+                                    let errorMessage = 'Unknown error';
+                                    if (error instanceof Error) {
+                                        errorMessage = error.message.split(':')[1] || error.message;
+                                    }
                                     setErrorMessage(errorMessage);
                                     setSubmitting(false);
                                 }
-                            }
-                        }}
-                    >
-                        {({ isSubmitting }) => (
-                            <div>
-                                <Form>
-                                    <FormTextField
-                                        name="amount"
-                                        placeholder="amount"
-                                        type="number"
-                                    />
-                                    <ThemeProvider theme={theme}>
-                                        <FormControl style={{ marginLeft: 8 }} variant="outlined">
-                                            <InputLabel id="select-filled-label">To</InputLabel>
-                                            <Select
-                                                labelId="select-filled-label"
-                                                id="select-filled"
-                                                value={toAccountCurrency}
-                                                onChange={(
-                                                    event: ChangeEvent<{ value: unknown }>,
-                                                ) => {
-                                                    setToAccountCurrency(
-                                                        event.target.value as string,
-                                                    );
-                                                }}
-                                                label="To"
-                                            >
-                                                {accounts.data &&
-                                                    accounts.data.accounts
-                                                        .filter(account => {
-                                                            return (
-                                                                account.currency !==
-                                                                location.state.currency
-                                                            );
-                                                        })
-                                                        .map(account => {
-                                                            return (
-                                                                <MenuItem
-                                                                    key={account.id}
-                                                                    value={account.currency}
-                                                                >
-                                                                    {account.currency}
-                                                                </MenuItem>
-                                                            );
-                                                        })}
-                                            </Select>
-                                        </FormControl>
-                                    </ThemeProvider>
-                                    <div>
-                                        <ThemeProvider theme={theme}>
-                                            <Button
-                                                className={classes.dialogButton}
-                                                disabled={isSubmitting}
-                                                variant="contained"
-                                                color="secondary"
-                                                type="submit"
-                                            >
-                                                Exchange
-                                            </Button>
-                                        </ThemeProvider>
-                                    </div>
-                                </Form>
-                            </div>
-                        )}
-                    </Formik>
-                </div>
-            </Dialog>
+                            }}
+                        >
+                            {({ isSubmitting }) => (
+                                <div>
+                                    <Form>
+                                        <FormTextField
+                                            name="amount"
+                                            placeholder="amount"
+                                            type="number"
+                                        />
+                                        <div>
+                                            <ThemeProvider theme={theme}>
+                                                <Button
+                                                    className={classes.dialogButton}
+                                                    disabled={isSubmitting}
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    type="submit"
+                                                >
+                                                    Add money
+                                                </Button>
+                                            </ThemeProvider>
+                                        </div>
+                                    </Form>
+                                </div>
+                            )}
+                        </Formik>
+                    </div>
+                </React.Fragment>
+            } />
         );
     };
 
-    const renderDetailsDialog = (): JSX.Element | undefined => {
-        if (user && user.data && user.data.me) {
-            return (
-                <Dialog isOpen={openDetailsDialog} onClose={() => setOpenDetailsDialog(false)}>
-                    Beneficiary: {user.data.me.firstName} {user.data.me.lastName} <br />
-                    IBAN: {location.state.iban} <br />
-                    BIC: {location.state.bic}
+    const renderExchangeDialog = (): React.ReactElement => {
+        return (
+            <Dialog isOpen={openExchangeDialog} onClose={() => setOpenExchangeDialog(false)} children={
+                <React.Fragment>
+                    <Title title="Exchange" fontSize={18} />
                     <div style={{ marginTop: 12 }}>
-                        <ThemeProvider theme={theme}>
-                            <Button
-                                className={classes.dialogButton}
-                                variant="contained"
-                                color="secondary"
-                                onClick={async () => {
-                                    // On button click, call the deleteAccount mutation
+                        <Formik
+                            initialValues={{ amount: 10 }}
+                            onSubmit={async (data, { setSubmitting, resetForm }) => {
+                                setSubmitting(true);
+                                if (toAccountCurrency !== '') {
                                     try {
-                                        const response: ExecutionResult<ExecutionResultDataDefault> = await deleteAccount(
-                                            {
-                                                variables: {
-                                                    currency: location.state.currency,
-                                                },
+                                        const response = await exchange({
+                                            variables: {
+                                                selectedAccountCurrency: location.state.currency,
+                                                toAccountCurrency: toAccountCurrency,
+                                                amount: data.amount,
                                             },
-                                        );
-
+                                        });
                                         if (response && response.data) {
-                                            setShowLoadingIcon(true);
-                                            setTimeout(async () => {
-                                                history.push('/dashboard');
-                                                history.go(0);
-                                            }, 3000);
+                                            setSubmitting(false);
+                                            setSuccessMessage(response.data.exchange.message);
+                                            resetForm();
                                         }
                                     } catch (error) {
-                                        const warning: string = error.message.split(':')[1];
-                                        setWarningMessage(warning);
+                                        let errorMessage = 'Unknown error';
+                                        if (error instanceof Error) {
+                                            errorMessage = error.message.split(':')[1] || error.message;
+                                        }
+                                        setErrorMessage(errorMessage);
+                                        setSubmitting(false);
                                     }
-                                }}
-                            >
-                                Delete account
-                            </Button>
-                        </ThemeProvider>
+                                }
+                            }}
+                        >
+                            {({ isSubmitting }) => (
+                                <div>
+                                    <Form>
+                                        <FormTextField
+                                            name="amount"
+                                            placeholder="amount"
+                                            type="number"
+                                        />
+                                        <ThemeProvider theme={theme}>
+                                            <FormControl style={{ marginLeft: 8 }} variant="outlined">
+                                                <InputLabel id="select-filled-label">To</InputLabel>
+                                                <Select
+                                                    labelId="select-filled-label"
+                                                    id="select-filled"
+                                                    value={toAccountCurrency}
+                                                    onChange={(event: SelectChangeEvent<string>) => {
+                                                        setToAccountCurrency(event.target.value as string);
+                                                    }}
+                                                    label="To"
+                                                >
+                                                    {accounts.data &&
+                                                        accounts.data.accounts
+                                                            .filter(account => {
+                                                                return (
+                                                                    account.currency !==
+                                                                    location.state.currency
+                                                                );
+                                                            })
+                                                            .map(account => {
+                                                                return (
+                                                                    <MenuItem
+                                                                        key={account.id}
+                                                                        value={account.currency}
+                                                                    >
+                                                                        {account.currency}
+                                                                    </MenuItem>
+                                                                );
+                                                            })}
+                                                </Select>
+                                            </FormControl>
+                                        </ThemeProvider>
+                                        <div>
+                                            <ThemeProvider theme={theme}>
+                                                <Button
+                                                    className={classes.dialogButton}
+                                                    disabled={isSubmitting}
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    type="submit"
+                                                >
+                                                    Exchange
+                                                </Button>
+                                            </ThemeProvider>
+                                        </div>
+                                    </Form>
+                                </div>
+                            )}
+                        </Formik>
                     </div>
-                </Dialog>
+                </React.Fragment>
+            } />
+        );
+    };
+
+    const renderDetailsDialog = (): React.ReactElement | undefined => {
+        if (user && user.data && user.data.me) {
+            return (
+                <Dialog
+                    isOpen={openDetailsDialog}
+                    onClose={() => setOpenDetailsDialog(false)}
+                    children={
+                        <React.Fragment>
+                            Beneficiary: {user.data.me.firstName} {user.data.me.lastName} <br />
+                            IBAN: {location.state.iban} <br />
+                            BIC: {location.state.bic}
+                            <div style={{ marginTop: 12 }}>
+                                <ThemeProvider theme={theme}>
+                                    <Button
+                                        className={classes.dialogButton}
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={async () => {
+                                            try {
+                                                const response = await deleteAccount({
+                                                    variables: {
+                                                        currency: location.state.currency,
+                                                    },
+                                                });
+                                                if (response && response.data) {
+                                                    setShowLoadingIcon(true);
+                                                    setTimeout(async () => {
+                                                        history.push('/dashboard');
+                                                        history.go(0);
+                                                    }, 3000);
+                                                }
+                                            } catch (error) {
+                                                let warning = 'Unknown error';
+                                                if (error instanceof Error) {
+                                                    warning = error.message.split(':')[1] || error.message;
+                                                }
+                                                setWarningMessage(warning);
+                                            }
+                                        }}
+                                    >
+                                        Delete account
+                                    </Button>
+                                </ThemeProvider>
+                            </div>
+                        </React.Fragment>
+                    }
+                />
             );
         }
     };
 
-    const renderAlertMessage = (): JSX.Element | undefined => {
+    const renderAlertMessage = (): React.ReactElement | undefined => {
         if (successMessage.length > 0) {
             return (
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>

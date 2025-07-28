@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
 import { ColorScheme } from '../../../utils/theme';
 
 export const useAccountStyles = makeStyles({

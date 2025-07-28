@@ -1,4 +1,4 @@
-import React, { useState, useEffect, MouseEvent } from 'react';
+import React, { useState, useEffect, MouseEvent, ReactElement } from 'react';
 import { useSideDrawerStyles } from './SideDrawer.style';
 import {
     useMeQuery,
@@ -9,7 +9,7 @@ import {
 } from '../../generated/graphql';
 import { useHistory } from 'react-router-dom';
 import { setAccessToken } from '../../utils/accessToken';
-import { MutationTuple } from '@apollo/react-hooks';
+import { MutationTuple } from '@apollo/client';
 
 const authUserNavigationItems: string[] = ['Dashboard', 'Settings', 'Logout'];
 const nonAuthUserNavigationItems: string[] = ['Login', 'Sign Up'];
@@ -20,10 +20,7 @@ interface SideDrawerProps {
 
 export const SideDrawer: React.FC<SideDrawerProps> = (props: SideDrawerProps) => {
     // GraphQL Mutations
-    const [logout, { client }]: MutationTuple<
-        LogoutMutation,
-        LogoutMutationVariables
-    > = useLogoutMutation();
+    const [logout, { client }] = useLogoutMutation();
 
     // GraphQL Queries
     const { data, loading }: MeQueryResult = useMeQuery();
@@ -51,7 +48,7 @@ export const SideDrawer: React.FC<SideDrawerProps> = (props: SideDrawerProps) =>
         drawerClasses = classes.siderDrawer + ' ' + classes.open;
     }
 
-    const renderAuthUserNavigationItems = (): JSX.Element => {
+    const renderAuthUserNavigationItems = (): ReactElement => {
         return (
             <>
                 {authUserNavigationItems.map(item => {
@@ -93,7 +90,7 @@ export const SideDrawer: React.FC<SideDrawerProps> = (props: SideDrawerProps) =>
         );
     };
 
-    const renderNonAuthUserNavigationItems = (): JSX.Element => {
+    const renderNonAuthUserNavigationItems = (): ReactElement => {
         return (
             <>
                 {nonAuthUserNavigationItems.map((item: string) => {
