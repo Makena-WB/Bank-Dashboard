@@ -6,7 +6,7 @@ import {
     RegisterMutation,
 } from '../../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
-import { Button, ThemeProvider } from '@mui/material';
+import { Button } from '@mui/material';
 import { theme } from '../../utils/theme';
 import { registerValidationSchema } from '../../schemas/registerValidationSchema';
 import { FormTextField, FormDatePicker } from '../../components/Forms/FormTextField';
@@ -148,7 +148,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                                 <FormDatePicker className={classes.formField} name="dateOfBirth" />
                             </div>
                             <div className={classes.formButton}>
-                                <ThemeProvider theme={theme}>
+                                {/* Removed inner ThemeProvider, already provided at top level */}
                                     <Button
                                         className={classes.formButton}
                                         disabled={isSubmitting}
@@ -158,7 +158,7 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
                                     >
                                         Sign Up
                                     </Button>
-                                </ThemeProvider>
+                                {/* End removed ThemeProvider */}
                             </div>
                             <div className={classes.loginText}>
                                 <p>

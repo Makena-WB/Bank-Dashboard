@@ -7,6 +7,8 @@ import { Observable } from '@apollo/client';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import jwtDecode from 'jwt-decode';
 import { App } from './App';
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from './utils/theme';
 import { getAccessToken, setAccessToken } from './utils/accessToken';
 
 // Setup Apollo Client manually without Apollo Boost
@@ -87,6 +89,8 @@ const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
     <ApolloProvider client={client}>
-        <App />
+        <ThemeProvider theme={theme}>
+            <App />
+        </ThemeProvider>
     </ApolloProvider>
 );

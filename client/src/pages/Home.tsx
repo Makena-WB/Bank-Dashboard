@@ -23,9 +23,9 @@ export const Home: React.FC<Props> = () => {
                         fontWeight: 'bold',
                     }}
                 >
-                    APOLLO
+                MONEY TREE
                 </div>
-                <div style={{ color: ColorScheme.WHITE, letterSpacing: 8 }}>Banking made easy.</div>
+                <div style={{ color: ColorScheme.WHITE, letterSpacing: 8 }}>Safety, Security, Growth.</div>
             </div>
         </div>
     );

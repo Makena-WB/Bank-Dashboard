@@ -1,4 +1,4 @@
-# apollobank 🚀
+# The Money Tree 🚀
 
 A fullstack GraphQL banking application built using React, Node & TypeScript.
 
@@ -10,11 +10,11 @@ Now it is fully open source. Check the contribution guide [here](CONTRIBUTING.md
 ### Prerequirement
 - Node.js
 - PostgreSQL 13
-  - create database name "apollobank"
+  - create database name "themoneytree"
 - Git clone
 ```bash
-git clone https://github.com/edwardcdev/apollobank.git
-cd apollobank
+git clone https://github.com/edwardcdev/themoneytree.git
+cd themoneytree
 ```
 
 ### Run backend
@@ -57,7 +57,7 @@ npm start
 
 ### Server side
 
-- Apollo Server
+ - The Money Tree Server
 - bcryptjs
 - cors
 - Express
@@ -71,7 +71,7 @@ npm start
 
 ### Client side
 
-- Apollo React Hooks
+ - The Money Tree React Hooks
 - FontAwesome Icons
 - Material UI
 - Recharts

@@ -10,7 +10,7 @@ import {
 import { setAccessToken } from '../../utils/accessToken';
 import { Formik, Form } from 'formik';
 import { FormTextField } from '../../components/Forms/FormTextField';
-import { Button, ThemeProvider } from '@mui/material';
+import { Button } from '@mui/material';
 import { theme, ColorScheme } from '../../utils/theme';
 import { loginValidationSchema } from '../../schemas/loginValidationSchema';
 import { ErrorMessage } from '../../components/Alerts/AlertMessage';
@@ -100,17 +100,15 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
                                 />
                             </div>
                             <div className={classes.formButton}>
-                                <ThemeProvider theme={theme}>
-                                    <Button
-                                        className={classes.formButton}
-                                        disabled={isSubmitting}
-                                        variant="contained"
-                                        color="secondary"
-                                        type="submit"
-                                    >
-                                        Login
-                                    </Button>
-                                </ThemeProvider>
+                                <Button
+                                    className={classes.formButton}
+                                    disabled={isSubmitting}
+                                    variant="contained"
+                                    color="secondary"
+                                    type="submit"
+                                >
+                                    Login
+                                </Button>
                             </div>
                             <div className={classes.registerText}>
                                 <p>

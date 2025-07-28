@@ -1,6 +1,6 @@
 import { FieldAttributes, useField } from 'formik';
 import React from 'react';
-import { ThemeProvider, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import { theme } from '../../utils/theme';
 
 export const FormTextField: React.FC<FieldAttributes<{}>> = ({
@@ -13,18 +13,16 @@ export const FormTextField: React.FC<FieldAttributes<{}>> = ({
     const errorText: string = meta.error && meta.touched ? meta.error : '';
 
     return (
-        <ThemeProvider theme={theme}>
-            <TextField
-                className={className}
-                type={type}
-                variant="outlined"
-                required={true}
-                placeholder={placeholder}
-                {...field}
-                helperText={errorText}
-                error={!!errorText}
-            />
-        </ThemeProvider>
+        <TextField
+            className={className}
+            type={type}
+            variant="outlined"
+            required={true}
+            placeholder={placeholder}
+            {...field}
+            helperText={errorText}
+            error={!!errorText}
+        />
     );
 };
 
@@ -37,21 +35,19 @@ export const FormDatePicker: React.FC<FieldAttributes<{}>> = ({
     const errorText: string = meta.error && meta.touched ? meta.error : '';
 
     return (
-        <ThemeProvider theme={theme}>
-            <TextField
-                className={className}
-                type="date"
-                variant="outlined"
-                required={true}
-                placeholder={placeholder}
-                {...field}
-                helperText={errorText}
-                error={!!errorText}
-                label="Date of birth"
-                InputLabelProps={{
-                    shrink: true,
-                }}
-            />
-        </ThemeProvider>
+        <TextField
+            className={className}
+            type="date"
+            variant="outlined"
+            required={true}
+            placeholder={placeholder}
+            {...field}
+            helperText={errorText}
+            error={!!errorText}
+            label="Date of birth"
+            InputLabelProps={{
+                shrink: true,
+            }}
+        />
     );
 };

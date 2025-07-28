@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { ApolloServer } from "apollo-server-express";
+import { ApolloServer } from "apollo-server-express"; // The Money Tree Server
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./resolvers/UserResolver";
 import { AccountResolver } from "./resolvers/AccountResolver";
@@ -31,7 +31,7 @@ import "reflect-metadata";
 	);
 
 	app.get("/", (_req: Request, res: Response) => {
-		res.send("🚀 Server is running");
+		res.send("🌳 The Money Tree Bank Server is running");
 	});
 
 	app.post("/refresh_token", async (req: Request, res: Response) => {
@@ -69,7 +69,7 @@ import "reflect-metadata";
 		? await createTypeOrmConnection()
 		: await createConnection();
 
-	const appolloServer: ApolloServer = new ApolloServer({
+const moneyTreeServer: ApolloServer = new ApolloServer({
 		schema: await buildSchema({
 			resolvers: [UserResolver, AccountResolver, TransactionResolver, CardResolver],
 		}),
@@ -78,9 +78,9 @@ import "reflect-metadata";
 		context: ({ req, res }) => ({ req, res }),
 	});
 
-	appolloServer.applyMiddleware({ app, cors: false });
+	moneyTreeServer.applyMiddleware({ app, cors: false });
 
 	app.listen(process.env.PORT || 4000, () => {
-		console.log(`🚀 Server ready at ${process.env.PORT || 4000}${appolloServer.graphqlPath}`);
+		console.log(`🌳 The Money Tree Bank Server ready at ${process.env.PORT || 4000}${moneyTreeServer.graphqlPath}`);
 	});
 })();
