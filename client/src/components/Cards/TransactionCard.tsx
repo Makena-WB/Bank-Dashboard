@@ -52,17 +52,15 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
                     style={{ textAlign: 'left' }}
                 />
                 <CardActions style={{ marginTop: '-40px' }}>
-                    <ThemeProvider theme={theme}>
-                        <IconButton
-                            style={{ marginLeft: 420 }}
-                            color="primary"
-                            onClick={handleExpandClick}
-                            aria-expanded={expanded}
-                            aria-label="show more"
-                        >
-                            <ExpandMoreIcon />
-                        </IconButton>
-                    </ThemeProvider>
+                    <IconButton
+                        style={{ marginLeft: 420 }}
+                        color="primary"
+                        onClick={handleExpandClick}
+                        aria-expanded={expanded}
+                        aria-label="show more"
+                    >
+                        <ExpandMoreIcon />
+                    </IconButton>
                 </CardActions>
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <CardContent style={{ marginTop: '-24px' }}>
@@ -74,7 +72,7 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
                         />
                         {/* Ensure expandedText and avatar are defined in TransactionCard.style.ts */}
                         <div className={classes.expandedText ? classes.expandedText : undefined} style={{ marginTop: 12 }}>
-                            Apollo card: <span style={{ color: 'black' }}>{card}</span>
+                            The Money Tree card: <span style={{ color: 'black' }}>{card}</span>
                         </div>
                         <div className={classes.expandedText ? classes.expandedText : undefined}>
                             Amount:{' '}

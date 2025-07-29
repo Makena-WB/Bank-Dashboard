@@ -13,8 +13,8 @@ Now it is fully open source. Check the contribution guide [here](CONTRIBUTING.md
   - create database name "themoneytree"
 - Git clone
 ```bash
-git clone https://github.com/edwardcdev/themoneytree.git
-cd themoneytree
+git clone https://github.com/Makena-WB/Bank-Dashboard.git
+cd Bank-Dashboard
 ```
 
 ### Run backend
@@ -74,14 +74,16 @@ npm start
  - The Money Tree React Hooks
 - FontAwesome Icons
 - Material UI
-- Recharts
+- Chart.js
 - Formik
 - Yup
 
 ## Todo
 
-- [ ] Don't allow the user to destroy an account if they are in debt or their account balance > 0
-- [ ] When deleting and destroying an account, alert the user with another dialog to check if they would like to proceed with this action.
 - [ ] Update the chart on the dashboard to show spending such that the y axis is the users account balance.
 - [ ] Sort transactions by date & sort chart data by date.
 - [ ] Fetch exchange rates from an API.
+- [ ] Simulate Transactions
+- [ ] Create cards for users
+- [ ] Conversion of currencies
+- [ ] User account management
